@@ -8,7 +8,6 @@ namespace Main{
     public class GameStateObservable : IGameStateObservable, IStartable, IDisposable{
         private readonly Subject<GameState> onChangeState = new Subject<GameState>();
         public IObservable<GameState> OnChangeState => onChangeState;
-        private Player me;
         private IQuestionReceiver QuestionReceiver;
 
         public GameStateObservable(IQuestionReceiver questionReceiver){
