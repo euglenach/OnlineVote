@@ -1,6 +1,7 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
+using Games;
 using Main;
 using ServerShared.MessagePackObjects;
 using UnityEngine;
@@ -11,7 +12,7 @@ public class QuestionSendButton : MonoBehaviour
 {
     [SerializeField] private InputField question;
     [SerializeField] private InputField options;
-    [Inject]private QuestionRPC questionRPC;
+    [Inject]private GameRPC gameRPC;
     private Button button;
     
     void Start(){
@@ -23,7 +24,7 @@ public class QuestionSendButton : MonoBehaviour
                   var ops = options.text.Split(',');
                   if(4 < ops.Length){ ops = ops.Take(4).ToArray();}
                   
-                  await questionRPC.SendQuestionAsync(new Question{
+                  await gameRPC.SendQuestionAsync(new Question{
                       Message = q,Options = ops
                   },ct);
               },this.GetCancellationTokenOnDestroy());

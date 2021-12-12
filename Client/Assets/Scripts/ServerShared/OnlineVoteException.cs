@@ -1,7 +1,7 @@
 using System;
 
 namespace ServerShared{
-    public class AlreadyMasterExistException : Exception{
-        
-    }
+    // public class AlreadyMasterExistException : Exception{
+    //     
+    // }
 }

@@ -1,4 +1,4 @@
-using Matching;
+using Games;
 using VContainer;
 using VContainer.Unity;
 
@@ -11,9 +11,9 @@ namespace DefaultNamespace.Entry{
                 Destroy(gameObject);
                 return;
             }
-
+            
             entryLifetimeScope = this;
-            builder.Register<MatchingRPC>(Lifetime.Singleton);
+            builder.Register<GameRPC>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<EntryButton>();
             builder.RegisterEntryPoint<RoomEntry>();
             DontDestroyOnLoad(gameObject);

@@ -3,7 +3,7 @@ using MagicOnion;
 using ServerShared.MessagePackObjects;
 
 namespace ServerShared.StreamingHubs{
-    public interface IMatchingHub : IStreamingHub<IMatchingHub,IMatchingHubReceiver>{
+    public interface IGameHub : IStreamingHub<IGameHub,IGameReceiver>{
         /// <summary>
         /// ゲームに接続することをサーバに伝える
         /// </summary>
@@ -12,9 +12,13 @@ namespace ServerShared.StreamingHubs{
         /// ゲームから切断することをサーバに伝える
         /// </summary>
         Task LeaveAsync();
+        
+        Task QuestionAsync(Question question,Player player);
+        Task SelectAsync(int index,Player player);
+        Task ResultAsync(QuestionResult[] questionResults,Player player);
     }
 
-    public interface IMatchingHubReceiver{
+    public interface IGameReceiver{
         /// <summary>
         /// 誰かがゲームに接続したことをクライアントに伝える
         /// </summary>
@@ -24,5 +28,8 @@ namespace ServerShared.StreamingHubs{
         /// 誰かがゲームから切断したことをクライアントに伝える
         /// </summary>
         void OnLeave(Player player);
+        void OnQuestion(Question question);
+        void OnResult(QuestionResult[] questionResults);
+        void OnSelect(int index);
     }
 }

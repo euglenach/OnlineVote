@@ -3,15 +3,15 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
+using Games;
 using ServerShared.MessagePackObjects;
 using UniRx;
 using UnityEngine;
-using UnityEngine.UI;
 using VContainer;
 
 namespace Main.View{
     public class OptionButtons : MonoBehaviour{
-        [Inject] private QuestionRPC questionRPC;
+        [Inject] private GameRPC gameRPC;
         private OptionButton[] buttons;
         private IDisposable disposableOnClicks;
         private CancellationToken cancellationToken;
@@ -39,7 +39,7 @@ namespace Main.View{
                        .Merge()
                        .ToUniTaskAsyncEnumerable()
                        .SubscribeAwait(async (i, ct) => {
-                           await questionRPC.OptionSelectAsync(i, ct);
+                           await gameRPC.OptionSelectAsync(i, ct);
                        }).AddTo(cancellationToken);
         }
     }

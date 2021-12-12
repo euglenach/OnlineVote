@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using Games;
 using Main;
-using ServerShared.MessagePackObjects;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +8,8 @@ using VContainer;
 
 public class StateText : MonoBehaviour{
     [Inject]private IGameStateObservable gameStateObservable;
-    [Inject] private RoomEntry room;
     private Text text;
-    private Player player;
+    private bool isMaster => GameRPC.Player.IsMaster;
     
     private void Start(){
         text = GetComponent<Text>();
@@ -24,8 +21,6 @@ public class StateText : MonoBehaviour{
     }
 
     void ChangeState(GameState state){
-        var isMaster = room.Player.IsMaster;
-        
         var str = state switch{
             GameState.HostWait => isMaster ? "質問を入力してください" : "出題者を待っています",
             GameState.Vote => isMaster ? "投票を待っています。" : "投票してください",
