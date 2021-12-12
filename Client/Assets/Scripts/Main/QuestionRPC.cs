@@ -14,6 +14,9 @@ namespace Main{
         private Channel channel;
         private IQuestionHub questionHub;
         private QuestionReceiver questionReceiver;
+        public IObservable<QuestionResult> ResultStream => questionReceiver.ResultStream;
+        public IObservable<Question> QuestionStream => questionReceiver.QuestionStream;
+        public IObservable<int> SelectStream => questionReceiver.SelectStream;
 
         public QuestionRPC(){
             channel = new Channel(Common.URL, ChannelCredentials.Insecure);

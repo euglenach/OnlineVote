@@ -1,4 +1,4 @@
-using Entry;
+using Matching;
 using VContainer;
 using VContainer.Unity;
 
@@ -13,8 +13,10 @@ namespace DefaultNamespace.Entry{
             }
 
             entryLifetimeScope = this;
+            builder.Register<MatchingRPC>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<EntryButton>();
             builder.RegisterEntryPoint<RoomEntry>();
+            DontDestroyOnLoad(gameObject);
         }
     }
 }

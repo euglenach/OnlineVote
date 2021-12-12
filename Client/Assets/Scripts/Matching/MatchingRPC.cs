@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Grpc.Core;
 using MagicOnion.Client;
 using ServerShared.MessagePackObjects;
 using ServerShared.StreamingHubs;
@@ -9,23 +10,21 @@ using Utils;
 using Channel = Grpc.Core.Channel;
 
 namespace Matching{
-    public class MatchingRPC : IMatchingHubReceiver , IDisposable{
+    public class MatchingRPC : IDisposable{
         private Channel channel;
         private IMatchingHub matchingHub;
-        private readonly Subject<Player> onjoin = new Subject<Player>();
-        public IObservable<Player> JoinStream => onjoin;
-
-        private readonly Subject<Player> onLeave = new Subject<Player>();
-        public IObservable<Player> LeaveStream => onLeave;
+        private MatchingHubReceiver matchingHubReceiver;
+        public IObservable<Player> JoinStream => matchingHubReceiver.JoinStream;
+        public IObservable<Player> LeaveStream => matchingHubReceiver.LeaveStream;
         
-        public MatchingRPC(Channel channel){
-            this.channel = channel;
-            this.matchingHub = StreamingHubClient.Connect<IMatchingHub, IMatchingHubReceiver>(channel,this);
+        public MatchingRPC(){
+            channel = new Channel(Common.URL, ChannelCredentials.Insecure);
+            this.matchingHubReceiver = new MatchingHubReceiver();
+            this.matchingHub = StreamingHubClient.Connect<IMatchingHub, IMatchingHubReceiver>(channel,matchingHubReceiver);
         }
 
         public void Dispose() => UniTask.Void(async () => {
-            onjoin.Dispose();
-            onLeave.Dispose();
+            await matchingHub.LeaveAsync();
             await matchingHub.DisposeAsync();
             await channel.ShutdownAsync();
         });
@@ -42,12 +41,24 @@ namespace Matching{
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        public void OnJoin(Player player){
-            onjoin.OnNext(player);
-        }
+        class MatchingHubReceiver : IMatchingHubReceiver, IDisposable{
+            private readonly Subject<Player> onjoin = new Subject<Player>();
+            public IObservable<Player> JoinStream => onjoin;
 
-        public void OnLeave(Player player){
-            onLeave.OnNext(player);
+            private readonly Subject<Player> onLeave = new Subject<Player>();
+            public IObservable<Player> LeaveStream => onLeave;
+            public void OnJoin(Player player){
+                onjoin.OnNext(player);
+            }
+
+            public void OnLeave(Player player){
+                onLeave.OnNext(player);
+            }
+
+            public void Dispose(){
+                onjoin?.Dispose();
+                onLeave?.Dispose();
+            }
         }
     }
 }
