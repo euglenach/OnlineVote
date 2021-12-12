@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Games;
 using Main;
 using UniRx;
@@ -11,8 +12,11 @@ public class StateText : MonoBehaviour{
     private Text text;
     private bool isMaster => GameRPC.Player.IsMaster;
     
-    private void Start(){
+    private async UniTaskVoid Start(){
         text = GetComponent<Text>();
+        // 最初は待ちフェーズ
+        ChangeState(GameState.HostWait);
+        await UniTask.WaitUntil(() => gameStateObservable is{});
         
         gameStateObservable
             .OnChangeState

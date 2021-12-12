@@ -1049,7 +1049,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: 
+    TypeName: DefaultNamespace.Entry.EntryLifetimeScope
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 1028154339}

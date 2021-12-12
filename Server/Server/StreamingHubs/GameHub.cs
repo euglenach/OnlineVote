@@ -7,7 +7,7 @@ using ServerShared.MessagePackObjects;
 using ServerShared.StreamingHubs;
 
 namespace Server.StreamingHubs{
-    public class MatchingHub : StreamingHubBase<IGameHub,IGameReceiver>, IGameHub{
+    public class GameHub : StreamingHubBase<IGameHub,IGameReceiver>, IGameHub{
         IGroup room;
         Player me;
         private IInMemoryStorage<Player> players;

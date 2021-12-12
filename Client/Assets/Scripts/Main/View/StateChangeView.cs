@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Games;
 using UniRx;
 using UnityEngine;
@@ -14,7 +15,12 @@ namespace Main.View{
 
         private bool isMaster => GameRPC.Player.IsMaster;
 
-        private void Start(){
+        private async UniTaskVoid Start(){
+            // 最初は待ちフェーズ
+            StateChange(GameState.HostWait);
+            
+            await UniTask.WaitUntil(() => gameStateObservable is{});
+            
             gameStateObservable
                 .OnChangeState
                 .Subscribe(StateChange)
@@ -24,9 +30,8 @@ namespace Main.View{
         void StateChange(GameState state){
             switch(state){
                 case GameState.HostWait:
-                    masterSection.gameObject.SetActive(isMaster);
-                    break;
                 case GameState.Vote:
+                    masterSection.gameObject.SetActive(isMaster);
                     respondentSection.gameObject.SetActive(!isMaster);
                     break;
                 case GameState.Result:
