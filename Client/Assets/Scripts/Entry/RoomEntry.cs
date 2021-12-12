@@ -1,33 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using DefaultNamespace;
+using Entry;
 using Grpc.Core;
-using MagicOnion.Client;
+using Matching;
 using ServerShared.MessagePackObjects;
 using ServerShared.StreamingHubs;
-using UnityEngine;
+using UnityEngine.SceneManagement;
+using Utils;
 using VContainer;
 using VContainer.Unity;
 using Channel = Grpc.Core.Channel;
 
-public class RoomEntry : IAsyncStartable, IMatchingHubReceiver{
-    [Inject] private IEntryNotification entryNotification;
+public class RoomEntry : IAsyncStartable{
+    [Inject] private EntryButton entryNotification;
     private IMatchingHub matchingHub;
+    public Player Player{get;private set;}
 
     public async UniTask StartAsync(CancellationToken cancellation){
-        await entryNotification.EntryAsync(cancellation);
+        var status = await entryNotification.EntryAsync(cancellation);
+        Player = status.Player;
 
-        var channel = new Channel("0.0.0.0:12345", ChannelCredentials.Insecure);
-        var matching = new Matching(channel);
-    }
-
-    public void OnJoin(Player player){
-        
-    }
-
-    public void OnLeave(Player player){
-        
+        var channel = new Channel(Common.URL, ChannelCredentials.Insecure);
+        var matching = new MatchingRPC(channel);
+        await matching.JoinAsync(status.RoomName,Player, cancellation);
+        SceneManager.LoadScene("Main");
     }
 }
