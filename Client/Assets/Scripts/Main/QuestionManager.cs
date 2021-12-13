@@ -27,6 +27,7 @@ namespace Main{
             question = await gameRPC.QuestionStream.ToUniTask(true,cancellation);
 
             gameRPC.SelectStream
+                   .Synchronize()
                    .Subscribe(i => {
                        if(answers.TryGetValue(i, out _)){
                            answers[i] += 1;
@@ -38,7 +39,7 @@ namespace Main{
         }
 
         public IEnumerable<QuestionResult> CreateResult(){
-            if(GameRPC.Player.IsMaster){ yield break;}
+            if(!GameRPC.Player.IsMaster){ yield break;}
             
             var count = answers.Count;
             foreach(var answer in answers){

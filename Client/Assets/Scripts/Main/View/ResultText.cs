@@ -10,7 +10,7 @@ namespace Main.View{
     public class ResultText : MonoBehaviour{
         [Inject] private GameRPC gameRPC;
 
-        private void Start(){
+        private void Awake(){
             var text = GetComponent<Text>();
             
             gameRPC.ResultStream
@@ -18,7 +18,7 @@ namespace Main.View{
                        var stringBuilder = new StringBuilder();
 
                        foreach(var result in results){
-                           stringBuilder.Append($"{result.Option}:{result.Percentage}%\n");
+                           stringBuilder.Append($"{result.Option}:{result.Percentage*100}%\n");
                        }
 
                        text.text = stringBuilder.ToString();

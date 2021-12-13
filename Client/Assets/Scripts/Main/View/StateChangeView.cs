@@ -12,6 +12,7 @@ namespace Main.View{
         [SerializeField] private GameObject masterSection;
         [SerializeField] private GameObject respondentSection;
         [SerializeField] private GameObject sendResultSection;
+        [SerializeField] private GameObject resultSection;
 
         private bool isMaster => GameRPC.Player.IsMaster;
 
@@ -33,15 +34,19 @@ namespace Main.View{
                     masterSection.gameObject.SetActive(isMaster);
                     respondentSection.gameObject.SetActive(false);
                     sendResultSection.gameObject.SetActive(false);
+                    resultSection.gameObject.SetActive(false);
                     break;
                 case GameState.Vote:
                     masterSection.gameObject.SetActive(false);
                     respondentSection.gameObject.SetActive(!isMaster);
                     sendResultSection.gameObject.SetActive(isMaster);
+                    resultSection.gameObject.SetActive(false);
                     break;
                 case GameState.Result:
                     respondentSection.SetActive(false);
                     masterSection.SetActive(false);
+                    sendResultSection.gameObject.SetActive(false);
+                    resultSection.gameObject.SetActive(true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);

@@ -17,32 +17,37 @@ namespace Main.View{
         private CancellationToken cancellationToken;
 
         private void Awake(){
+            
             cancellationToken = this.GetCancellationTokenOnDestroy();
 
             gameRPC.QuestionStream.Subscribe(Init);
         }
 
         public void Init(Question question){
-            buttons = GetComponentsInChildren<OptionButton>();
+            // if(GameRPC.Player.IsMaster){ return;}
+            
+            buttons = GetComponentsInChildren<OptionButton>(true);
             disposableOnClicks?.Dispose();
             
-            foreach(var button in buttons){
-                button.gameObject.SetActive(false);
-            }
-            
-            foreach(var i in Enumerable.Range(0,question.Options.Length)){
-                var button = buttons.FirstOrDefault(b => !b.gameObject.activeInHierarchy);
-                button?.gameObject.SetActive(true);
+            foreach(var (button,i) in buttons.Select((b,i) => (b , i))){
+                if(question.Options.Length <= i){
+                    button.gameObject.SetActive(false);
+                    continue;
+                }
+                button.gameObject.SetActive(true);
                 button.Init(question.Options[i],i);
+                button.Interactable(true);
             }
 
             disposableOnClicks = 
                 buttons.Select(b => b.OnClick)
                        .Merge()
                        .First()
-                       .ToUniTaskAsyncEnumerable()
-                       .SubscribeAwait(async (i, ct) => {
-                           await gameRPC.OptionSelectAsync(i, ct);
+                       .Subscribe(i=> {
+                           foreach(var button in buttons){
+                               button.Interactable(false);
+                           }
+                           gameRPC.OptionSelectAsync(i, cancellationToken).Forget();
                        }).AddTo(cancellationToken);
         }
     }

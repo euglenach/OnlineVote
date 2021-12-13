@@ -41,19 +41,19 @@ namespace Games{
         
         public async UniTask SendQuestionAsync(Question question,CancellationToken cancellationToken){
             cancellationToken.ThrowIfCancellationRequested();
-            await gameHub.QuestionAsync(question,GameRPC.Player).AsUniTask();
+            await gameHub.QuestionAsync(question,Player).AsUniTask();
             cancellationToken.ThrowIfCancellationRequested();
         }
 
         public async UniTask OptionSelectAsync(int index,CancellationToken cancellationToken){
             cancellationToken.ThrowIfCancellationRequested();
-            await gameHub.SelectAsync(index,GameRPC.Player).AsUniTask();
+            await gameHub.SelectAsync(index,Player).AsUniTask();
             cancellationToken.ThrowIfCancellationRequested();
         }
 
         public async UniTask ResultAsync(QuestionResult[] results,CancellationToken cancellationToken){
             cancellationToken.ThrowIfCancellationRequested();
-            await gameHub.ResultAsync(results,GameRPC.Player);
+            await gameHub.ResultAsync(results,Player).AsUniTask();
             cancellationToken.ThrowIfCancellationRequested();
         }
 

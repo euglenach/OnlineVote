@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
@@ -18,7 +17,7 @@ namespace Main.View{
                 .OnClickAsAsyncEnumerable()
                 .ForEachAwaitWithCancellationAsync(async (_, ct) => {
                     await gameRPC.ResultAsync(questionManager.CreateResult().ToArray(), ct);
-                },this.GetCancellationTokenOnDestroy());
+                },this.GetCancellationTokenOnDestroy()).Forget();
         }
     }
 }

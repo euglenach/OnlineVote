@@ -10,6 +10,7 @@ namespace Main.View{
         private int optionIndex;
         private readonly Subject<int> onClick = new Subject<int>();
         public IObservable<int> OnClick => onClick;
+        private Button button;
 
         public void Init(string question,int index){
             var text = GetComponentInChildren<Text>();
@@ -17,12 +18,17 @@ namespace Main.View{
             optionIndex = index;
         }
 
-        private void Start(){
-            GetComponent<Button>()
+        private void Awake(){
+            button = GetComponent<Button>();
+            button
                 .OnClickAsAsyncEnumerable()
                 .ForEachAsync(_ => {
                     onClick.OnNext(optionIndex);
                 },this.GetCancellationTokenOnDestroy());
+        }
+
+        public void Interactable(bool interactable){
+            button.interactable = interactable;
         }
     }
 }
