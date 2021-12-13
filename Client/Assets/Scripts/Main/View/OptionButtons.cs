@@ -26,7 +26,7 @@ namespace Main.View{
         public void Init(Question question){
             // if(GameRPC.Player.IsMaster){ return;}
             
-            buttons = GetComponentsInChildren<OptionButton>(true);
+            buttons = gameObject.GetComponentsInChildren<OptionButton>(true);
             disposableOnClicks?.Dispose();
             
             foreach(var (button,i) in buttons.Select((b,i) => (b , i))){

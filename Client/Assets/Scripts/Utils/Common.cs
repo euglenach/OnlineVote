@@ -3,7 +3,8 @@ using Grpc.Core;
 
 namespace Utils{
     public class Common{
-        public const string URL = "localhost:12345";
+        private const string URL = "localhost:12345";
+        private const int port = 12345;
         private static Channel channel;
 
         public static Channel GetChannel(){

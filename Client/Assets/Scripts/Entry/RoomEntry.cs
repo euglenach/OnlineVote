@@ -16,7 +16,7 @@ public class RoomEntry : IAsyncStartable{
 
         try{
             await gameRPC.JoinAsync(status.RoomName,status.Player, cancellation);
-        } catch(Exception){
+        } catch(Exception e){
             SceneManager.LoadScene("Entry");
             return;
         } 
