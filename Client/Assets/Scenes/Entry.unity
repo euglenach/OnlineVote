@@ -1555,8 +1555,7 @@ MonoBehaviour:
   parentReference:
     TypeName: 
   autoRun: 1
-  autoInjectGameObjects:
-  - {fileID: 1168354542}
+  autoInjectGameObjects: []
 --- !u!1 &1774921623
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,6 +18,8 @@ namespace Main.View{
 
         private void Awake(){
             cancellationToken = this.GetCancellationTokenOnDestroy();
+
+            gameRPC.QuestionStream.Subscribe(Init);
         }
 
         public void Init(Question question){
@@ -37,6 +39,7 @@ namespace Main.View{
             disposableOnClicks = 
                 buttons.Select(b => b.OnClick)
                        .Merge()
+                       .First()
                        .ToUniTaskAsyncEnumerable()
                        .SubscribeAwait(async (i, ct) => {
                            await gameRPC.OptionSelectAsync(i, ct);

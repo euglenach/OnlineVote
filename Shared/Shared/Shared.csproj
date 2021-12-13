@@ -8,10 +8,22 @@
 
     <ItemGroup>
       <PackageReference Include="MagicOnion.Abstractions" Version="3.0.12" />
+      <PackageReference Include="MagicOnion.MSBuild.Tasks" Version="3.0.12" />
+      <PackageReference Include="MessagePack.MSBuild.Tasks" Version="2.1.152">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="MessagePack.UnityShims" Version="2.1.152" />
     </ItemGroup>
 
     <ItemGroup>
         <Compile Include="..\..\Client\Assets\Scripts\ServerShared\**\*.cs" />
     </ItemGroup>
+
+    <Target Name="GenerateMessagePack" AfterTargets="Compile">
+        <MessagePackGenerator Input=".\Shared.csproj" Output="..\..\Client\Assets\Scripts\Generated\MessagePack.Generated.cs" />
+    </Target>
+    <Target Name="GenerateMagicOnion" AfterTargets="Compile">
+        <MagicOnionGenerator Input=".\Shared.csproj" Output="..\..\Client\Assets\Scripts\Generated\MagicOnion.Generated.cs" />
+    </Target>
 </Project>
