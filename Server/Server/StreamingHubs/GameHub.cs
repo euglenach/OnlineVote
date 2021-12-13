@@ -16,10 +16,10 @@ namespace Server.StreamingHubs{
             (room,players) = await Group.AddAsync(roomName,player);
             me = player;
 
-            if(players.AllValues.Any(p => p.IsMaster)){
+            if(players.AllValues.Count(p => p.IsMaster) >= 2){
                 await room.RemoveAsync(Context);
+                throw new Exception();
                 return;
-                // throw new AlreadyMasterExistException();
             }
 
             // ブロードキャスト
@@ -34,8 +34,8 @@ namespace Server.StreamingHubs{
         }
         
         public Task QuestionAsync(Question question,Player player){
-            
             Broadcast(room).OnQuestion(question);
+            Console.WriteLine($"master client send question {this.Context.ContextId}");
             return Task.CompletedTask;
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Games;
@@ -13,12 +14,12 @@ public class RoomEntry : IAsyncStartable{
     public async UniTask StartAsync(CancellationToken cancellation){
         var status = await entryNotification.EntryAsync(cancellation);
 
-        // try{
+        try{
             await gameRPC.JoinAsync(status.RoomName,status.Player, cancellation);
-        // } catch(AlreadyMasterExistException){
-        //     SceneManager.LoadScene("Entry");
-        //     return;
-        // } 
+        } catch(Exception){
+            SceneManager.LoadScene("Entry");
+            return;
+        } 
         SceneManager.LoadScene("Main");
     }
 }
