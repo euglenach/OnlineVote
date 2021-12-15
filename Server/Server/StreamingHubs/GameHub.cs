@@ -18,6 +18,7 @@ namespace Server.StreamingHubs{
 
             if(players.AllValues.Count(p => p.IsMaster) >= 2){
                 await room.RemoveAsync(Context);
+                Console.WriteLine($"already exist master {Context.ContextId}");
                 throw new Exception();
                 return;
             }
@@ -44,7 +45,7 @@ namespace Server.StreamingHubs{
             return Task.CompletedTask;
         }
 
-        public Task ResultAsync(QuestionResult[] questionResults,Player player){
+        public Task ResultAsync(QuestionResult questionResults,Player player){
             Broadcast(room).OnResult(questionResults);
             return Task.CompletedTask;
         }

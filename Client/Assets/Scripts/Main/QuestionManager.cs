@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using Games;
 using UniRx;
 using VContainer;
-using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using ServerShared.MessagePackObjects;
 using VContainer.Unity;
@@ -12,7 +13,7 @@ using VContainer.Unity;
 namespace Main{
     public class QuestionManager{
         private GameRPC gameRPC;
-        private readonly Dictionary<int,int> answers = new Dictionary<int, int>();
+        private int[] answers;
         private Question question;
 
         [Inject]
@@ -26,27 +27,23 @@ namespace Main{
             
             question = await gameRPC.QuestionStream.ToUniTask(true,cancellation);
 
+            answers = new int[question.Options.Length];
+
             gameRPC.SelectStream
                    .Synchronize()
                    .Subscribe(i => {
-                       if(answers.TryGetValue(i, out _)){
-                           answers[i] += 1;
-                       } else{
-                           answers.Add(i,1);
-                       }
+                       answers[i] += 1;
                    })
                    .AddTo(cancellation);
         }
 
-        public IEnumerable<QuestionResult> CreateResult(){
-            if(!GameRPC.Player.IsMaster){ yield break;}
+        public QuestionResult CreateResult(){
+            if(!GameRPC.Player.IsMaster){ return null;}
             
-            var count = answers.Count;
-            foreach(var answer in answers){
-                yield return new QuestionResult{
-                    Option = question.Options[answer.Key], Percentage = (float)answer.Value / (float)count
-                };
-            }
+            return new QuestionResult{
+                Options = question.Options,
+                Answers = answers
+            };
         }
     }
 }

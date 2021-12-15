@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Text;
 using Games;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 using VContainer;
 
 namespace Main.View{
@@ -14,11 +16,15 @@ namespace Main.View{
             var text = GetComponent<Text>();
             
             gameRPC.ResultStream
-                   .Subscribe(results => {
+                   .Subscribe(result => {
                        var stringBuilder = new StringBuilder();
 
-                       foreach(var result in results){
-                           stringBuilder.Append($"{result.Option}:{result.Percentage*100}%\n");
+                       var total = result.Answers.Sum();
+                       foreach(var ((count,op),i) in result.Answers
+                                                      .Zip(result.Options,(count,option) => (count, option))
+                                                      .OrderByDescending(x => x.count)
+                                                      .Indexed()){
+                           stringBuilder.Append($"{result.Options[i]}:{(float)count / (float)total * 100}% ...{count}人\n");
                        }
 
                        text.text = stringBuilder.ToString();

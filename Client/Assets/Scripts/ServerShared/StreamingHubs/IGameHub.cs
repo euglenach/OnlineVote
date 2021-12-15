@@ -15,7 +15,7 @@ namespace ServerShared.StreamingHubs{
         
         Task QuestionAsync(Question question,Player player);
         Task SelectAsync(int index,Player player);
-        Task ResultAsync(QuestionResult[] questionResults,Player player);
+        Task ResultAsync(QuestionResult questionResults,Player player);
     }
 
     public interface IGameReceiver{
@@ -29,7 +29,7 @@ namespace ServerShared.StreamingHubs{
         /// </summary>
         void OnLeave(Player player);
         void OnQuestion(Question question);
-        void OnResult(QuestionResult[] questionResults);
+        void OnResult(QuestionResult questionResults);
         void OnSelect(int index);
     }
 }

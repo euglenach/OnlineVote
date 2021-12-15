@@ -20,7 +20,7 @@ namespace Main.View{
             
             cancellationToken = this.GetCancellationTokenOnDestroy();
 
-            gameRPC.QuestionStream.Subscribe(Init);
+            gameRPC.QuestionStream.Subscribe(Init).AddTo(this);
         }
 
         public void Init(Question question){

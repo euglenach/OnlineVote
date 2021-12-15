@@ -17,16 +17,13 @@ namespace ServerShared.MessagePackObjects{
     
     [MessagePackObject]
     public class QuestionResult{
-        /// <summary>
-        /// 選択肢の一個一個
-        /// </summary>
         [Key(0)]
-        public string Option{get;set;}
+        public string[] Options{get;set;}
         
         /// <summary>
-        /// 割合
+        /// 回答(Optionsとインデックスで紐づけ！)
         /// </summary>
         [Key(1)]
-        public float Percentage{get;set;}
+        public int[] Answers{get;set;}
     }
 }

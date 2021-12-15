@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Grpc.Core;
 using MagicOnion.Client;
 using ServerShared.MessagePackObjects;
 using ServerShared.StreamingHubs;
@@ -13,7 +14,7 @@ namespace Games{
         private Channel channel;
         private IGameHub gameHub;
         private GameReceiver gameReceiver;
-        public IObservable<QuestionResult[]> ResultStream => gameReceiver.ResultStream;
+        public IObservable<QuestionResult> ResultStream => gameReceiver.ResultStream;
         public IObservable<Question> QuestionStream => gameReceiver.QuestionStream;
         public IObservable<int> SelectStream => gameReceiver.SelectStream;
         public IObservable<Player> JoinStream => gameReceiver.JoinStream;
@@ -21,7 +22,7 @@ namespace Games{
         public static Player Player{get;private set;}
 
         public GameRPC(){
-            channel = Common.GetChannel();
+            channel = new Channel(Common.URL, ChannelCredentials.Insecure);
             gameReceiver = new GameReceiver();
             gameHub = StreamingHubClient.Connect<IGameHub, IGameReceiver>(channel,gameReceiver);
         }
@@ -51,7 +52,7 @@ namespace Games{
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        public async UniTask ResultAsync(QuestionResult[] results,CancellationToken cancellationToken){
+        public async UniTask ResultAsync(QuestionResult results,CancellationToken cancellationToken){
             cancellationToken.ThrowIfCancellationRequested();
             await gameHub.ResultAsync(results,Player).AsUniTask();
             cancellationToken.ThrowIfCancellationRequested();
@@ -60,7 +61,7 @@ namespace Games{
         public async void Dispose(){
             gameReceiver.Dispose();
             await gameHub.DisposeAsync();
-            await Common.ChannelShutdownAsync();
+            await channel.ShutdownAsync();
         }
         
         class GameReceiver : IGameReceiver, IDisposable{
@@ -68,8 +69,8 @@ namespace Games{
             public IObservable<Player> JoinStream => onjoin;
             private readonly Subject<Player> onLeave = new Subject<Player>();
             public IObservable<Player> LeaveStream => onLeave;
-            private readonly Subject<QuestionResult[]> resultStream = new Subject<QuestionResult[]>();
-            public IObservable<QuestionResult[]> ResultStream => resultStream;
+            private readonly Subject<QuestionResult> resultStream = new Subject<QuestionResult>();
+            public IObservable<QuestionResult> ResultStream => resultStream;
             private readonly Subject<Question> questionStream = new Subject<Question>();
             public IObservable<Question> QuestionStream => questionStream;
             private readonly Subject<int> selectStream = new Subject<int>();
@@ -87,7 +88,7 @@ namespace Games{
                 questionStream.OnNext(question);
             }
 
-            public void OnResult(QuestionResult[] questionResults){
+            public void OnResult(QuestionResult questionResults){
                 resultStream.OnNext(questionResults);
             }
 

@@ -14,8 +14,6 @@ public class StateText : MonoBehaviour{
     
     private async UniTaskVoid Start(){
         text = GetComponent<Text>();
-        // 最初は待ちフェーズ
-        ChangeState(GameState.HostWait);
         await UniTask.WaitUntil(() => gameStateObservable is{});
         
         gameStateObservable
@@ -27,11 +25,12 @@ public class StateText : MonoBehaviour{
     void ChangeState(GameState state){
         var str = state switch{
             GameState.HostWait => isMaster ? "質問を入力してください" : "出題者を待っています",
-            GameState.Vote => isMaster ? "投票を待っています。" : "投票してください",
+            GameState.Vote => isMaster ? "投票を待っています。" : null,
             GameState.Result => "結果発表",
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
 
+        if(string.IsNullOrEmpty(str)){ return;}
         text.text = str;
     }
 }

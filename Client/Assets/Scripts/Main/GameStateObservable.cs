@@ -2,15 +2,13 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Games;
-using ServerShared.MessagePackObjects;
-using ServerShared.StreamingHubs;
 using UniRx;
 using VContainer;
 using VContainer.Unity;
 
 namespace Main{
     public class GameStateObservable : IGameStateObservable, IStartable, IDisposable{
-        private readonly Subject<GameState> onChangeState = new Subject<GameState>();
+        private readonly BehaviorSubject<GameState> onChangeState = new BehaviorSubject<GameState>(GameState.HostWait);
         public IObservable<GameState> OnChangeState => onChangeState;
         private GameRPC gameRPC;
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();

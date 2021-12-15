@@ -16,7 +16,7 @@ namespace Main.View{
             GetComponent<Button>()
                 .OnClickAsAsyncEnumerable()
                 .ForEachAwaitWithCancellationAsync(async (_, ct) => {
-                    await gameRPC.ResultAsync(questionManager.CreateResult().ToArray(), ct);
+                    await gameRPC.ResultAsync(questionManager.CreateResult(), ct);
                 },this.GetCancellationTokenOnDestroy()).Forget();
         }
     }
